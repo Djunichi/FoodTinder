@@ -16,6 +16,14 @@
         { "name": "MONGO_URI", "value": "mongodb://172.31.2.208:27017/foodtinder" },
         { "name": "DATABASE_URL", "value": "postgres://admin:admin@172.31.2.208:5432/foodtinder?sslmode=disable" }
       ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/foodtinder-app",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
       "memory": 256
     }
   ]
