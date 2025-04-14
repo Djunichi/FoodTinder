@@ -19,10 +19,19 @@ func NewVoteService(voteRepo VoteRepo) *VoteService {
 
 func (v *VoteService) CreateVote(ctx context.Context, req *dto.CreateVoteReq) error {
 
+	sessionId, err := uuid.Parse(req.SessionID)
+	if err != nil {
+		return err
+	}
+	productId, err := uuid.Parse(req.Vote.ProductID)
+	if err != nil {
+		return err
+	}
+
 	vote := model.Vote{
 		VoteId:    uuid.New(),
-		SessionID: req.SessionID,
-		ProductID: req.Vote.ProductID,
+		SessionID: sessionId,
+		ProductID: productId,
 		Score:     req.Vote.Score,
 	}
 
@@ -32,11 +41,20 @@ func (v *VoteService) CreateVote(ctx context.Context, req *dto.CreateVoteReq) er
 func (v *VoteService) CreateVotes(ctx context.Context, req *dto.CreateVotesReq) error {
 	votes := make([]model.Vote, len(req.Votes))
 
+	sessionId, err := uuid.Parse(req.SessionID)
+	if err != nil {
+		return err
+	}
+
 	for _, vote := range req.Votes {
+		productId, err := uuid.Parse(vote.ProductID)
+		if err != nil {
+			return err
+		}
 		votes = append(votes, model.Vote{
 			VoteId:    uuid.New(),
-			SessionID: req.SessionID,
-			ProductID: vote.ProductID,
+			SessionID: sessionId,
+			ProductID: productId,
 			Score:     vote.Score,
 		})
 	}
@@ -45,10 +63,24 @@ func (v *VoteService) CreateVotes(ctx context.Context, req *dto.CreateVotesReq) 
 }
 
 func (v *VoteService) UpdateVote(ctx context.Context, req *dto.UpdateVoteReq) error {
+
+	sessionId, err := uuid.Parse(req.SessionID)
+	if err != nil {
+		return err
+	}
+	productId, err := uuid.Parse(req.Vote.ProductID)
+	if err != nil {
+		return err
+	}
+	voteId, err := uuid.Parse(req.Vote.VoteId)
+	if err != nil {
+		return err
+	}
+
 	vote := model.Vote{
-		VoteId:    req.Vote.VoteId,
-		SessionID: req.SessionID,
-		ProductID: req.Vote.ProductID,
+		VoteId:    voteId,
+		SessionID: sessionId,
+		ProductID: productId,
 		Score:     req.Vote.Score,
 	}
 
@@ -58,11 +90,26 @@ func (v *VoteService) UpdateVote(ctx context.Context, req *dto.UpdateVoteReq) er
 func (v *VoteService) UpdateVotes(ctx context.Context, req *dto.UpdateVotesReq) error {
 	votes := make([]model.Vote, len(req.Votes))
 
+	sessionId, err := uuid.Parse(req.SessionID)
+	if err != nil {
+		return err
+	}
+
 	for _, vote := range req.Votes {
+		voteId, err := uuid.Parse(vote.VoteId)
+		if err != nil {
+			return err
+		}
+
+		productId, err := uuid.Parse(vote.ProductID)
+		if err != nil {
+			return err
+		}
+
 		votes = append(votes, model.Vote{
-			VoteId:    vote.VoteId,
-			SessionID: req.SessionID,
-			ProductID: vote.ProductID,
+			VoteId:    voteId,
+			SessionID: sessionId,
+			ProductID: productId,
 			Score:     vote.Score,
 		})
 	}

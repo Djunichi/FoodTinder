@@ -1,6 +1,8 @@
 package service
 
-import "food-tinder/internal/repository"
+import (
+	"food-tinder/internal/repository"
+)
 
 type Container struct {
 	ProductService *ProductService

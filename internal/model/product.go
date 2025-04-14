@@ -5,7 +5,8 @@ import (
 )
 
 type MachineProduct struct {
-	ID            uuid.UUID            `json:"id" bson:"_id"`
+	ID            uuid.UUID            `json:"id" bson:"-"`
+	MongoId       string               `bson:"_id" json:"-"`
 	Name          string               `json:"name" bson:"name"`
 	Manufacturer  string               `json:"manufacturer" bson:"manufacturer"`
 	ShortDesc     string               `json:"shortDescription" bson:"short_description"`
@@ -32,23 +33,23 @@ type Attribute struct {
 }
 
 type Image struct {
-	ID            uuid.UUID `json:"id" bson:"id"`
-	Title         string    `json:"title" bson:"title"`
-	FileName      string    `json:"fileName" bson:"file_name"`
-	URL           string    `json:"url" bson:"url"`
-	ImageWidth    int       `json:"imageWidth" bson:"image_width"`
-	ImageHeight   int       `json:"imageHeight" bson:"image_height"`
-	ImageType     int       `json:"imageType" bson:"image_type"`
-	TargetDevices []int     `json:"targetDevices" bson:"target_devices"`
+	ID            string `json:"id" bson:"_id"`
+	Title         string `json:"title" bson:"title"`
+	FileName      string `json:"fileName" bson:"file_name"`
+	URL           string `json:"url" bson:"url"`
+	ImageWidth    int    `json:"imageWidth" bson:"image_width"`
+	ImageHeight   int    `json:"imageHeight" bson:"image_height"`
+	ImageType     int    `json:"imageType" bson:"image_type"`
+	TargetDevices []int  `json:"targetDevices" bson:"target_devices"`
 }
 
 type Category struct {
-	ID          uuid.UUID `json:"id" bson:"id"`
-	Name        string    `json:"name" bson:"name"`
-	Description string    `json:"description" bson:"description"`
-	Priority    int       `json:"priority" bson:"priority"`
-	Color       string    `json:"color" bson:"color"`
-	CreatedAt   string    `json:"createdAt" bson:"created_at"`
-	UpdatedAt   string    `json:"updatedAt" bson:"updated_at"`
-	Type        int       `json:"type" bson:"type"`
+	ID          string `json:"id" bson:"_id"`
+	Name        string `json:"name" bson:"name"`
+	Description string `json:"description" bson:"description"`
+	Priority    int    `json:"priority" bson:"priority"`
+	Color       string `json:"color" bson:"color"`
+	CreatedAt   string `json:"createdAt" bson:"created_at"`
+	UpdatedAt   string `json:"updatedAt" bson:"updated_at"`
+	Type        int    `json:"type" bson:"type"`
 }

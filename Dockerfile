@@ -35,7 +35,7 @@ WORKDIR /root/
 COPY --from=build /app/food-tinder /usr/local/bin/food-tinder
 
 # Copy config
-COPY --from=builder /app/config /app/config
+COPY --from=build /app/config /root/config
 
 # Expose the port on which the service will run
 EXPOSE 8080

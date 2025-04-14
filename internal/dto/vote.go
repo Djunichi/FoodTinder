@@ -1,29 +1,27 @@
 package dto
 
-import "github.com/google/uuid"
-
 type Vote struct {
-	VoteId    uuid.UUID `json:"vote_id"`
-	ProductID uuid.UUID `json:"product_id"`
-	Score     int32     `json:"score"`
+	VoteId    string `json:"vote_id"`
+	ProductID string `json:"product_id"`
+	Score     int32  `json:"score"`
 }
 
 type CreateVoteReq struct {
-	SessionID uuid.UUID `json:"session_id"`
-	Vote      Vote      `json:"vote"`
+	SessionID string `json:"session_id"`
+	Vote      Vote   `json:"vote"`
 }
 
 type CreateVotesReq struct {
-	SessionID uuid.UUID `db:"session_id"`
-	Votes     []Vote    `json:"votes"`
+	SessionID string `db:"session_id"`
+	Votes     []Vote `json:"votes"`
 }
 
 type UpdateVoteReq struct {
-	SessionID uuid.UUID `json:"session_id"`
-	Vote      Vote      `json:"vote"`
+	SessionID string `json:"session_id"`
+	Vote      Vote   `json:"vote"`
 }
 
 type UpdateVotesReq struct {
-	SessionID uuid.UUID `json:"session_id"`
-	Votes     []Vote    `json:"votes"`
+	SessionID string `json:"session_id"`
+	Votes     []Vote `json:"votes"`
 }

@@ -38,7 +38,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/products/get-unrated/{session-id}": {
+        "/products/get-unrated": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -50,6 +50,15 @@ const docTemplate = `{
                     "products"
                 ],
                 "summary": "Gets unrated products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -107,7 +116,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/sessions/get-by-id/{session-id}": {
+        "/sessions/get-by-id": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -119,6 +128,15 @@ const docTemplate = `{
                     "sessions"
                 ],
                 "summary": "Gets a session by specific id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -221,7 +239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/votes/get-by-session/{session-id}": {
+        "/votes/get-by-session": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -233,6 +251,15 @@ const docTemplate = `{
                     "votes"
                 ],
                 "summary": "Get votes by specific session id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -391,8 +418,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is a sample server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

@@ -27,19 +27,20 @@ func (s *SessionRepository) CreateSession(ctx context.Context, session *model.Se
 }
 
 func (s *SessionRepository) GetSessionById(ctx context.Context, id uuid.UUID) (*model.Session, error) {
-	err := s.db.WithContext(ctx).Model(&model.Session{}).Where("session_id = ?", id).Find(&model.Session{}).Error
+	var session model.Session
+	err := s.db.WithContext(ctx).Model(&model.Session{}).Where("session_id = ?", id).Find(&session).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("[SessionRepository] failed to get session: %w", err)
 	}
-	return nil, nil
+	return &session, nil
 }
 
 func (s *SessionRepository) GetActiveSessions(ctx context.Context) ([]model.Session, error) {
 	var sessions []model.Session
-	err := s.db.WithContext(ctx).Model(&model.Session{}).Where("status = ?", model.SessionStatusActive).Error
+	err := s.db.WithContext(ctx).Model(&model.Session{}).Where("status = ?", model.SessionStatusActive).Find(&sessions).Error
 	if err != nil {
 		return nil, fmt.Errorf("[SessionRepository] failed to get active sessions: %w", err)
 	}

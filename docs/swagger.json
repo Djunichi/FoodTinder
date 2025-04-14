@@ -32,7 +32,7 @@
                 }
             }
         },
-        "/products/get-unrated/{session-id}": {
+        "/products/get-unrated": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -44,6 +44,15 @@
                     "products"
                 ],
                 "summary": "Gets unrated products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -101,7 +110,7 @@
                 }
             }
         },
-        "/sessions/get-by-id/{session-id}": {
+        "/sessions/get-by-id": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -113,6 +122,15 @@
                     "sessions"
                 ],
                 "summary": "Gets a session by specific id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -215,7 +233,7 @@
                 }
             }
         },
-        "/votes/get-by-session/{session-id}": {
+        "/votes/get-by-session": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -227,6 +245,15 @@
                     "votes"
                 ],
                 "summary": "Get votes by specific session id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session UUID",
+                        "name": "session-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"

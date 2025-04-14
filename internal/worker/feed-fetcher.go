@@ -53,8 +53,13 @@ func (f *FeedFetcher) FetchFeed(url string) func() {
 		}
 
 		var parsed model.FetchResponse
-		if err := json.Unmarshal(body, &parsed); err != nil {
+		if err = json.Unmarshal(body, &parsed); err != nil {
 			log.Printf("[FeedFetcher] Error when parsing JSON: %v", err)
+			return
+		}
+
+		if parsed.Status != "success" {
+			log.Printf("[FeedFetcher] Error fetching url %s: %s", url, parsed.Status)
 			return
 		}
 

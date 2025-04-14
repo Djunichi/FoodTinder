@@ -17,83 +17,119 @@ import (
 	"food-tinder/internal/worker"
 	"food-tinder/migrations"
 	"github.com/robfig/cron/v3"
-	"log"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 )
 
+var logger *zap.SugaredLogger
+
 func main() {
+	logg, err := zap.NewProduction()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to initialize zap logger: %v", err))
+	}
+	defer logg.Sync()
+	logger = logg.Sugar()
+
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
 
-	conf, err := config.Load("config")
-	if err != nil {
-		log.Fatalf("Can not read config %v", err)
-	}
+	conf := mustLoadConfig(getConfigPath())
+	mustMigratePostgres(conf)
+	db := mustInitPostgres(conf)
+	mongoClient := mustInitMongo(conf)
+	defer mongoClient.Disconnect(context.Background())
 
+	repos := repository.NewRepositoryContainer(db, mongoClient, logger)
+	services := service.NewServiceContainer(repos)
+	handler := handler2.NewHttpHandler(services, conf, logger)
+	handler.Init()
+
+	scheduler := startCronJob(repos, conf)
+	defer scheduler.Stop()
+
+	setupGracefulShutdown(ctx, cancelFunc, handler)
+}
+
+func mustLoadConfig(path string) *config.Config {
+	conf, err := config.Load(path)
+	if err != nil {
+		logger.Fatalf("Cannot read config: %v", err)
+	}
+	return conf
+}
+
+func getConfigPath() string {
+	if path := os.Getenv("CONFIG_PATH"); path != "" {
+		return path
+	}
+	return "config"
+}
+
+func mustMigratePostgres(conf *config.Config) {
 	dbFiles := migrations.GetPostgresMigrations()
 	dbVersion, err := migration.PostgresMigrate(conf.DB.URL, conf.Migration, dbFiles)
 	if err != nil {
-		log.Fatalf("Can not migrate db %v", err)
+		logger.Fatalf("Cannot migrate db: %v", err)
 	}
-	log.Printf("dbVersion: %v", dbVersion)
+	logger.Infof("dbVersion: %v", dbVersion)
+}
 
+func mustInitPostgres(conf *config.Config) *gorm.DB {
 	db, err := repository.InitORM(conf.DB)
 	if err != nil {
-		log.Fatalf("Can not init db %v", err)
+		logger.Fatalf("Cannot init db: %v", err)
 	}
+	return db
+}
 
-	mongoCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+func mustInitMongo(conf *config.Config) *mongo.Client {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
-	mongoClient, err := repository.NewMongoClient(mongoCtx, conf.MongoUrl)
+	client, err := repository.NewMongoClient(ctx, conf.MongoUrl)
 	if err != nil {
-		log.Fatalf("Mongo connection failed: %v", err)
+		logger.Fatalf("Mongo connection failed: %v", err)
 	}
-	defer mongoClient.Disconnect(mongoCtx)
+	return client
+}
 
-	repos := repository.NewRepositoryContainer(db, mongoClient)
-	services := service.NewServiceContainer(repos)
-
-	handler := handler2.NewHttpHandler(services, conf)
-	handler.Init()
-
+func startCronJob(repos *repository.Container, conf *config.Config) *cron.Cron {
 	f := worker.NewFeedFetcher(repos.Products)
-
 	c := cron.New()
-	_, err = c.AddFunc("0 0 * * *", f.FetchFeed(conf.FeedUrl))
-
+	_, err := c.AddFunc(fmt.Sprintf("%s %s %s %s %s", conf.Worker.Minute, conf.Worker.Hour, conf.Worker.Day, conf.Worker.Month, conf.Worker.DayOfWeek), f.FetchFeed(conf.FeedUrl))
 	if err != nil {
-		log.Fatalf("Can not update product feed %v", err)
+		logger.Fatalf("Cannot schedule product feed update: %v", err)
 	}
-
 	c.Start()
-	fmt.Println("Cron started. Waiting for daily task...")
+	logger.Info("Cron started. Waiting for daily task...")
+	return c
+}
 
-	// setup graceful shutdown channel
+func setupGracefulShutdown(ctx context.Context, cancelFunc context.CancelFunc, handler handler2.HttpHandler) {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	defer signal.Stop(sigChan)
 
 	go func() {
 		<-sigChan
-		log.Println("Signal received. Initiating shutdown...")
+		logger.Info("Signal received. Initiating shutdown...")
 		cancelFunc()
 	}()
 
 	<-ctx.Done()
 
-	// Call Stop() with timeout
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
 
-	log.Println("Shutting down HTTP server...")
+	logger.Info("Shutting down HTTP server...")
 	if err := handler.Stop(shutdownCtx); err != nil {
-		log.Fatalf("HTTP server shutdown error: %v", err)
+		logger.Fatalf("HTTP server shutdown error: %v", err)
 	}
 
-	log.Println("Stopping cron scheduler...")
-	c.Stop()
+	logger.Info("Shutdown complete.")
 }

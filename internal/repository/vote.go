@@ -71,25 +71,27 @@ func (v *VoteRepository) UpdateVotes(ctx context.Context, vote []model.Vote) err
 }
 
 func (v *VoteRepository) GetVotesBySession(ctx context.Context, sessionId uuid.UUID) ([]model.Vote, error) {
-	err := v.db.WithContext(ctx).Model(&model.Vote{}).Where("session_id = ?", sessionId).Find(&model.Vote{}).Error
+	var votes []model.Vote
+	err := v.db.WithContext(ctx).Model(&model.Vote{}).Where("session_id = ?", sessionId).Find(&votes).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("[VoteRepository] failed to get votes by session: %w", err)
 	}
-	return nil, nil
+	return votes, nil
 }
 
 func (v *VoteRepository) GetVotesByProduct(ctx context.Context, productId uuid.UUID) ([]model.Vote, error) {
-	err := v.db.WithContext(ctx).Model(&model.Vote{}).Where("product_id = ?", productId).Find(&model.Vote{}).Error
+	var votes []model.Vote
+	err := v.db.WithContext(ctx).Model(&model.Vote{}).Where("product_id = ?", productId).Find(&votes).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("[VoteRepository] failed to get votes by product: %w", err)
 	}
-	return nil, nil
+	return votes, nil
 }
 
 func (v *VoteRepository) GetProductScoreStats(ctx context.Context) ([]model.VoteScoreStats, error) {

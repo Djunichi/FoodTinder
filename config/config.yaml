@@ -2,13 +2,13 @@
 env: LOCAL
 
 db:
-  url: postgresql://food_tinder:secret@localhost:5432/food_tinder?sslmode=disable
+  url: postgresql://postgres:password@localhost:5432/foodtinder?sslmode=disable
   maxidletime: 1h
   maxlifetime: 1h
   maxopenconn: 100
   maxidleconn: 10
 
-mongo_url: mongodb://mongo:27017
+mongo_url: mongodb://localhost:27017
 
 feed_url: https://amperoid.tenants.foodji.io/machines/4bf115ee-303a-4089-a3ea-f6e7aae0ab94
 
@@ -17,3 +17,10 @@ http_port: ":9000"
 migration:
   direction: "up"
   version: 0
+
+worker:
+  hour: "0"
+  minute: "0"
+  day: "*"
+  month: "*"
+  dayofweek: "*"

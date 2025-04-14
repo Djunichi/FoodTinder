@@ -63,10 +63,16 @@ paths:
       summary: Gets all products
       tags:
       - products
-  /products/get-unrated/{session-id}:
+  /products/get-unrated:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Session UUID
+        in: query
+        name: session-id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -108,10 +114,16 @@ paths:
       summary: Gets all active sessions
       tags:
       - sessions
-  /sessions/get-by-id/{session-id}:
+  /sessions/get-by-id:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Session UUID
+        in: query
+        name: session-id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -182,10 +194,16 @@ paths:
       summary: Gets an aggregated scores across all sessions
       tags:
       - votes
-  /votes/get-by-session/{session-id}:
+  /votes/get-by-session:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Session UUID
+        in: query
+        name: session-id
+        required: true
+        type: string
       produces:
       - application/json
       responses:

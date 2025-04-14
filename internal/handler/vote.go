@@ -4,7 +4,6 @@ import (
 	"food-tinder/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"log"
 )
 
 // createVote godoc
@@ -22,14 +21,14 @@ func (h *httpHandler) createVote() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := &dto.CreateVoteReq{}
 		if err := c.ShouldBindJSON(req); err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(400, gin.H{"error": "error when parsing data"})
 			return
 		}
 
 		err := h.voteSvc.CreateVote(c, req)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -53,14 +52,14 @@ func (h *httpHandler) createManyVotes() gin.HandlerFunc {
 
 		req := &dto.CreateVotesReq{}
 		if err := c.ShouldBindJSON(req); err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(400, gin.H{"error": "error when parsing data"})
 			return
 		}
 
 		err := h.voteSvc.CreateVotes(c, req)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -83,14 +82,14 @@ func (h *httpHandler) updateVote() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := &dto.UpdateVoteReq{}
 		if err := c.ShouldBindJSON(req); err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(400, gin.H{"error": "error when parsing data"})
 			return
 		}
 
 		err := h.voteSvc.UpdateVote(c, req)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -113,14 +112,14 @@ func (h *httpHandler) updateManyVotes() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := &dto.UpdateVotesReq{}
 		if err := c.ShouldBindJSON(req); err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(400, gin.H{"error": "error when parsing data"})
 			return
 		}
 
 		err := h.voteSvc.UpdateVotes(c, req)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -135,12 +134,13 @@ func (h *httpHandler) updateManyVotes() gin.HandlerFunc {
 // @Tags votes
 // @Accept  json
 // @Produce  json
+// @Param session-id query string true "Session UUID"
 // @Success 200
 // @Failure 500 {object} error "Internal Server Error"
-// @Router /votes/get-by-session/{session-id} [get]
+// @Router /votes/get-by-session [get]
 func (h *httpHandler) getVoteBySession() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sessionId, err := uuid.Parse(c.Param("session-id"))
+		sessionId, err := uuid.Parse(c.Query("session-id"))
 		if err != nil {
 			c.JSON(400, gin.H{"error": "session-id must be a valid uuid"})
 			return
@@ -148,7 +148,7 @@ func (h *httpHandler) getVoteBySession() gin.HandlerFunc {
 
 		votes, err := h.voteSvc.GetVotesBySession(c, sessionId)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -171,7 +171,7 @@ func (h *httpHandler) getAggregatedScores() gin.HandlerFunc {
 
 		votes, err := h.voteSvc.GetAggregatedScoresByAllSessions(c)
 		if err != nil {
-			log.Printf("[Vote Handler] %v", err)
+			h.logger.Errorf("[Vote Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 

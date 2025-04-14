@@ -2,10 +2,12 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"food-tinder/internal/config"
 	"food-tinder/internal/service"
+	"food-tinder/internal/writer"
 	"github.com/gin-gonic/gin"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -23,20 +25,24 @@ type httpHandler struct {
 	productSvc ProductSvc
 	sessionSvc SessionSvc
 	voteSvc    VoteSvc
+	logger     *zap.SugaredLogger
 }
 
-func NewHttpHandler(svc *service.Container, conf *config.Config) HttpHandler {
+func NewHttpHandler(svc *service.Container, conf *config.Config, logger *zap.SugaredLogger) HttpHandler {
 	return &httpHandler{
 		conf:       conf,
 		productSvc: svc.ProductService,
 		sessionSvc: svc.SessionService,
 		voteSvc:    svc.VoteService,
+		logger:     logger,
 	}
 }
 
 func (h *httpHandler) Init() {
 	h.router = gin.New()
-	h.router.Use(gin.LoggerWithWriter(gin.DefaultWriter, "/api/v1/ping"))
+
+	logWriter := writer.NewZapWriter(h.logger)
+	h.router.Use(gin.LoggerWithWriter(logWriter, "/api/v1/ping"))
 
 	h.addRoutes()
 
@@ -46,15 +52,15 @@ func (h *httpHandler) Init() {
 	}
 
 	go func() {
-		log.Printf("Starting server on %s\n", h.conf.HTTPPort)
-		if err := h.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("HTTP server error: %v", err)
+		h.logger.Infof("Starting server on %s\n", h.conf.HTTPPort)
+		if err := h.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			h.logger.Fatalf("HTTP server error: %v", err)
 		}
 	}()
 }
 
 func (h *httpHandler) Stop(ctx context.Context) error {
-	log.Println("Shutting down HTTP server...")
+	h.logger.Infof("Shutting down HTTP server...")
 	return h.server.Shutdown(ctx)
 }
 

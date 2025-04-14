@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"log"
 )
 
 // createSession godoc
@@ -20,7 +19,7 @@ func (h *httpHandler) createSession() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := h.sessionSvc.CreateSession(c)
 		if err != nil {
-			log.Printf("[Session Handler] %v", err)
+			h.logger.Errorf("[Session Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -35,12 +34,13 @@ func (h *httpHandler) createSession() gin.HandlerFunc {
 // @Tags sessions
 // @Accept  json
 // @Produce  json
+// @Param session-id query string true "Session UUID"
 // @Success 200
 // @Failure 500 {object} error "Internal Server Error"
-// @Router /sessions/get-by-id/{session-id} [get]
+// @Router /sessions/get-by-id [get]
 func (h *httpHandler) getSessionById() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sessionId, err := uuid.Parse(c.Param("session-id"))
+		sessionId, err := uuid.Parse(c.Query("session-id"))
 		if err != nil {
 			c.JSON(400, gin.H{"error": "session-id must be a valid uuid"})
 			return
@@ -48,7 +48,7 @@ func (h *httpHandler) getSessionById() gin.HandlerFunc {
 
 		session, err := h.sessionSvc.GetSessionById(c, sessionId)
 		if err != nil {
-			log.Printf("[Session Handler] %v", err)
+			h.logger.Errorf("[Session Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
@@ -70,7 +70,7 @@ func (h *httpHandler) getActiveSessions() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessions, err := h.sessionSvc.GetActiveSessions(c)
 		if err != nil {
-			log.Printf("[Session Handler] %v", err)
+			h.logger.Errorf("[Session Handler] %v", err)
 			c.JSON(500, gin.H{"error": "internal server error"})
 		}
 
