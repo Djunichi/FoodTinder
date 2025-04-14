@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 )
 
 type ProductRepository struct {
@@ -17,6 +18,11 @@ func NewProductRepository(db *mongo.Client) *ProductRepository {
 }
 
 func (p *ProductRepository) SaveProducts(ctx context.Context, products []model.MachineProduct) error {
+	if len(products) == 0 {
+		log.Println("[ProductRepository] No products to save")
+		return nil
+	}
+
 	models := make([]mongo.WriteModel, 0, len(products))
 	collection := p.db.Database("food-tinder").Collection("products")
 	for _, product := range products {
@@ -31,11 +37,21 @@ func (p *ProductRepository) SaveProducts(ctx context.Context, products []model.M
 		models = append(models, upsert)
 	}
 
-	if len(models) == 0 {
-		return nil
+	result, err := collection.BulkWrite(ctx, models)
+	if err != nil {
+		if bwe, ok := err.(mongo.BulkWriteException); ok {
+			for _, writeErr := range bwe.WriteErrors {
+				log.Printf("[ProductRepository] Bulk write error [%d]: %s", writeErr.Index, writeErr.Message)
+			}
+		}
+		log.Printf("[ProductRepository] BulkWrite failed: %v", err)
+		return err
 	}
-	_, err := collection.BulkWrite(ctx, models)
-	return err
+
+	log.Printf("[ProductRepository] SaveProducts: Matched: %d, Modified: %d, Upserted: %d",
+		result.MatchedCount, result.ModifiedCount, result.UpsertedCount)
+
+	return nil
 }
 
 func (p *ProductRepository) GetAllProducts(ctx context.Context) ([]model.MachineProduct, error) {

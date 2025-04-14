@@ -8,7 +8,7 @@ db:
   maxopenconn: 100
   maxidleconn: 10
 
-mongo_url: 123
+mongo_url: mongodb://mongo:27017
 
 feed_url: https://amperoid.tenants.foodji.io/machines/4bf115ee-303a-4089-a3ea-f6e7aae0ab94
 

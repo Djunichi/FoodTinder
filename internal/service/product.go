@@ -23,10 +23,10 @@ func (p *ProductService) GetUnratedProducts(ctx context.Context, sessionId uuid.
 
 	votes, err := p.voteRepo.GetVotesBySession(ctx, sessionId)
 	if err != nil {
-		return []model.MachineProduct{}, err
+		return nil, err
 	}
 
-	voteIds := make([]uuid.UUID, len(votes))
+	voteIds := make([]uuid.UUID, 0, len(votes))
 	for _, vote := range votes {
 		voteIds = append(voteIds, vote.ProductID)
 	}

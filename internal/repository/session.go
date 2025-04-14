@@ -20,7 +20,7 @@ func NewSessionRepository(db *gorm.DB) *SessionRepository {
 func (s *SessionRepository) CreateSession(ctx context.Context, session *model.Session) (*model.Session, error) {
 	err := s.db.WithContext(ctx).Create(session).Error
 	if err != nil {
-		return nil, fmt.Errorf("failed to create session: %w", err)
+		return nil, fmt.Errorf("[SessionRepository] failed to create session: %w", err)
 	}
 
 	return session, nil
@@ -32,7 +32,7 @@ func (s *SessionRepository) GetSessionById(ctx context.Context, id uuid.UUID) (*
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("failed to get session: %w", err)
+		return nil, fmt.Errorf("[SessionRepository] failed to get session: %w", err)
 	}
 	return nil, nil
 }
@@ -41,7 +41,7 @@ func (s *SessionRepository) GetActiveSessions(ctx context.Context) ([]model.Sess
 	var sessions []model.Session
 	err := s.db.WithContext(ctx).Model(&model.Session{}).Where("status = ?", model.SessionStatusActive).Error
 	if err != nil {
-		return nil, fmt.Errorf("failed to get active sessions: %w", err)
+		return nil, fmt.Errorf("[SessionRepository] failed to get active sessions: %w", err)
 	}
 	return sessions, nil
 }
@@ -49,7 +49,7 @@ func (s *SessionRepository) GetActiveSessions(ctx context.Context) ([]model.Sess
 func (s *SessionRepository) DeleteSession(ctx context.Context, id uuid.UUID) error {
 	err := s.db.WithContext(ctx).Delete(&model.Session{}, "session_id = ?", id)
 	if err != nil {
-		return fmt.Errorf("failed to delete session: %w", err)
+		return fmt.Errorf("[SessionRepository] failed to delete session: %w", err)
 	}
 	return nil
 }
@@ -57,7 +57,7 @@ func (s *SessionRepository) DeleteSession(ctx context.Context, id uuid.UUID) err
 func (s *SessionRepository) UpdateSession(ctx context.Context, session *model.Session) error {
 	err := s.db.WithContext(ctx).Where("session_id = ?", session.SessionId).Model(&model.Vote{}).Updates(session).Error
 	if err != nil {
-		return fmt.Errorf("failed to update session: %w", err)
+		return fmt.Errorf("[SessionRepository] failed to update session: %w", err)
 	}
 	return nil
 }

@@ -38,7 +38,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/products/get-unrated": {
+        "/products/get-unrated/{session-id}": {
             "get": {
                 "consumes": [
                     "application/json"

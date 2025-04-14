@@ -20,7 +20,7 @@ func NewVoteRepository(db *gorm.DB) *VoteRepository {
 func (v *VoteRepository) CreateVote(ctx context.Context, vote *model.Vote) error {
 	err := v.db.WithContext(ctx).Create(vote).Error
 	if err != nil {
-		return fmt.Errorf("failed to create vote: %w", err)
+		return fmt.Errorf("[VoteRepository] failed to create vote: %w", err)
 	}
 
 	return nil
@@ -29,7 +29,7 @@ func (v *VoteRepository) CreateVote(ctx context.Context, vote *model.Vote) error
 func (v *VoteRepository) CreateVotes(ctx context.Context, votes []model.Vote) error {
 	err := v.db.WithContext(ctx).Create(votes).Error
 	if err != nil {
-		return fmt.Errorf("failed to create votes: %w", err)
+		return fmt.Errorf("[VoteRepository] failed to create votes: %w", err)
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func (v *VoteRepository) GetVote(ctx context.Context, id uuid.UUID) (*model.Vote
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("failed to get vote: %w", err)
+		return nil, fmt.Errorf("[VoteRepository] failed to get vote: %w", err)
 	}
 	return nil, nil
 }
@@ -49,7 +49,7 @@ func (v *VoteRepository) GetVote(ctx context.Context, id uuid.UUID) (*model.Vote
 func (v *VoteRepository) DeleteVote(ctx context.Context, id uuid.UUID) error {
 	err := v.db.WithContext(ctx).Delete(&model.Vote{}, "vote_id = ?", id)
 	if err != nil {
-		return fmt.Errorf("failed to delete vote: %w", err)
+		return fmt.Errorf("[VoteRepository] failed to delete vote: %w", err)
 	}
 	return nil
 }
@@ -57,7 +57,7 @@ func (v *VoteRepository) DeleteVote(ctx context.Context, id uuid.UUID) error {
 func (v *VoteRepository) UpdateVote(ctx context.Context, vote *model.Vote) error {
 	err := v.db.WithContext(ctx).Where("vote_id = ?", vote.VoteId).Model(&model.Vote{}).Updates(vote).Error
 	if err != nil {
-		return fmt.Errorf("failed to update vote: %w", err)
+		return fmt.Errorf("[VoteRepository] failed to update vote: %w", err)
 	}
 	return nil
 }
@@ -65,7 +65,7 @@ func (v *VoteRepository) UpdateVote(ctx context.Context, vote *model.Vote) error
 func (v *VoteRepository) UpdateVotes(ctx context.Context, vote []model.Vote) error {
 	err := v.db.WithContext(ctx).Model(&model.Vote{}).Updates(vote).Error
 	if err != nil {
-		return fmt.Errorf("failed to update votes: %w", err)
+		return fmt.Errorf("[VoteRepository] failed to update votes: %w", err)
 	}
 	return nil
 }
@@ -76,7 +76,7 @@ func (v *VoteRepository) GetVotesBySession(ctx context.Context, sessionId uuid.U
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("failed to get votes by session: %w", err)
+		return nil, fmt.Errorf("[VoteRepository] failed to get votes by session: %w", err)
 	}
 	return nil, nil
 }
@@ -87,7 +87,7 @@ func (v *VoteRepository) GetVotesByProduct(ctx context.Context, productId uuid.U
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("failed to get votes by product: %w", err)
+		return nil, fmt.Errorf("[VoteRepository] failed to get votes by product: %w", err)
 	}
 	return nil, nil
 }
@@ -100,7 +100,7 @@ func (v *VoteRepository) GetProductScoreStats(ctx context.Context) ([]model.Vote
 		Scan(&results).Error
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to get product score stats: %w", err)
+		return nil, fmt.Errorf("[VoteRepository] failed to get product score stats: %w", err)
 	}
 
 	return results, nil

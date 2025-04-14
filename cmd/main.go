@@ -45,14 +45,14 @@ func main() {
 		log.Fatalf("Can not init db %v", err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	mongoCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	mongoClient, err := repository.NewMongoClient(ctx, conf.MongoUrl)
+	mongoClient, err := repository.NewMongoClient(mongoCtx, conf.MongoUrl)
 	if err != nil {
 		log.Fatalf("Mongo connection failed: %v", err)
 	}
-	defer mongoClient.Disconnect(ctx)
+	defer mongoClient.Disconnect(mongoCtx)
 
 	repos := repository.NewRepositoryContainer(db, mongoClient)
 	services := service.NewServiceContainer(repos)
@@ -66,7 +66,7 @@ func main() {
 	_, err = c.AddFunc("0 0 * * *", f.FetchFeed(conf.FeedUrl))
 
 	if err != nil {
-		log.Fatalf("Can not updte product feed %v", err)
+		log.Fatalf("Can not update product feed %v", err)
 	}
 
 	c.Start()
@@ -89,9 +89,11 @@ func main() {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
 
+	log.Println("Shutting down HTTP server...")
 	if err := handler.Stop(shutdownCtx); err != nil {
-		log.Fatalf("Failed to gracefully shutdown: %v", err)
+		log.Fatalf("HTTP server shutdown error: %v", err)
 	}
 
-	log.Println("Shutdown complete.")
+	log.Println("Stopping cron scheduler...")
+	c.Stop()
 }
