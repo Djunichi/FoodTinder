@@ -22,7 +22,7 @@
       "name": "postgres",
       "image": "postgres:15",
       "essential": false,
-      "memory": 512,
+      "memory": 256,
       "portMappings": [
         {
           "containerPort": 5432,
@@ -39,7 +39,7 @@
       "name": "mongo",
       "image": "mongo:6",
       "essential": false,
-      "memory": 256,
+      "memory": 512,
       "portMappings": [
         {
           "containerPort": 27017,
