@@ -1,7 +1,6 @@
 // @title Example API
 // @version 1.0
 // @description This is a sample server.
-// @host localhost:9000
 // @BasePath /api/v1
 package main
 
