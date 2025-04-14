@@ -61,6 +61,17 @@ func mustLoadConfig(path string) *config.Config {
 	if err != nil {
 		logger.Fatalf("Cannot read config: %v", err)
 	}
+
+	mongoUrl := os.Getenv("MONGO_URI")
+	dbUrl := os.Getenv("DATABASE_URL")
+
+	if mongoUrl != "" {
+		conf.MongoUrl = mongoUrl
+	}
+	if dbUrl != "" {
+		conf.DB.URL = dbUrl
+	}
+
 	return conf
 }
 
