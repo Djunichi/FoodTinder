@@ -13,39 +13,10 @@
         }
       ],
       "environment": [
-        { "name": "MONGO_URI", "value": "mongodb://localhost:27017/foodtinder" },
-        { "name": "DATABASE_URL", "value": "postgres://admin:admin@localhost:5432/foodtinder?sslmode=disable" }
+        { "name": "MONGO_URI", "value": "mongodb://172.31.2.208:27017/foodtinder" },
+        { "name": "DATABASE_URL", "value": "postgres://admin:admin@172.31.2.208:5432/foodtinder?sslmode=disable" }
       ],
-      "memory": 128
-    },
-    {
-      "name": "postgres",
-      "image": "postgres:15",
-      "essential": false,
-      "memory": 256,
-      "portMappings": [
-        {
-          "containerPort": 5432,
-          "hostPort": 5432
-        }
-      ],
-      "environment": [
-        { "name": "POSTGRES_USER", "value": "admin" },
-        { "name": "POSTGRES_PASSWORD", "value": "admin" },
-        { "name": "POSTGRES_DB", "value": "foodtinder" }
-      ]
-    },
-    {
-      "name": "mongo",
-      "image": "mongo:6",
-      "essential": false,
-      "memory": 512,
-      "portMappings": [
-        {
-          "containerPort": 27017,
-          "hostPort": 27017
-        }
-      ]
+      "memory": 256
     }
   ]
 }
