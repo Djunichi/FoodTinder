@@ -1,0 +1,244 @@
+basePath: /api/v1
+definitions:
+  dto.CreateVoteReq:
+    properties:
+      session_id:
+        type: string
+      vote:
+        $ref: '#/definitions/dto.Vote'
+    type: object
+  dto.CreateVotesReq:
+    properties:
+      sessionID:
+        type: string
+      votes:
+        items:
+          $ref: '#/definitions/dto.Vote'
+        type: array
+    type: object
+  dto.UpdateVoteReq:
+    properties:
+      session_id:
+        type: string
+      vote:
+        $ref: '#/definitions/dto.Vote'
+    type: object
+  dto.UpdateVotesReq:
+    properties:
+      session_id:
+        type: string
+      votes:
+        items:
+          $ref: '#/definitions/dto.Vote'
+        type: array
+    type: object
+  dto.Vote:
+    properties:
+      product_id:
+        type: string
+      score:
+        type: integer
+      vote_id:
+        type: string
+    type: object
+host: localhost:9000
+info:
+  contact: {}
+  description: This is a sample server.
+  title: Example API
+  version: "1.0"
+paths:
+  /products/get-all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets all products
+      tags:
+      - products
+  /products/get-unrated:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets unrated products
+      tags:
+      - products
+  /sessions/create-session:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Creates a new Session
+      tags:
+      - sessions
+  /sessions/get-active:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets all active sessions
+      tags:
+      - sessions
+  /sessions/get-by-id/{session-id}:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets a session by specific id
+      tags:
+      - sessions
+  /votes/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVoteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Creates a new Vote
+      tags:
+      - votes
+  /votes/create-many:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVotesReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Creates a new Votes
+      tags:
+      - votes
+  /votes/get-aggregated-scores:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Gets an aggregated scores across all sessions
+      tags:
+      - votes
+  /votes/get-by-session/{session-id}:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get votes by specific session id
+      tags:
+      - votes
+  /votes/update:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVoteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Updates a new Vote
+      tags:
+      - votes
+  /votes/update-many:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVotesReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Updates a new Votes
+      tags:
+      - votes
+swagger: "2.0"
