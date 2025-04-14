@@ -15,12 +15,14 @@
       "environment": [
         { "name": "MONGO_URI", "value": "mongodb://localhost:27017/foodtinder" },
         { "name": "DATABASE_URL", "value": "postgres://admin:admin@localhost:5432/foodtinder?sslmode=disable" }
-      ]
+      ],
+      "memory": 256,
     },
     {
       "name": "postgres",
       "image": "postgres:15",
       "essential": false,
+      "memory": 256,
       "portMappings": [
         {
           "containerPort": 5432,
@@ -37,6 +39,7 @@
       "name": "mongo",
       "image": "mongo:6",
       "essential": false,
+      "memory": 256,
       "portMappings": [
         {
           "containerPort": 27017,
