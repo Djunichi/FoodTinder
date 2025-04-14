@@ -41,7 +41,6 @@ definitions:
       vote_id:
         type: string
     type: object
-host: localhost:9000
 info:
   contact: {}
   description: This is a sample server.
