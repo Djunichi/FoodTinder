@@ -6,7 +6,6 @@ This repository contains a Docker Compose setup for running a PostgreSQL databas
 - Docker installed on your machine
 - Docker Compose installed on your machine
 
-
 ## Components
 
 ### 1. Application
