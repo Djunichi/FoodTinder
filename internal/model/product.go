@@ -10,14 +10,14 @@ type MachineProduct struct {
 	Name          string               `json:"name" bson:"name"`
 	Manufacturer  string               `json:"manufacturer" bson:"manufacturer"`
 	ShortDesc     string               `json:"shortDescription" bson:"short_description"`
-	Description   string               `json:"description" bson:"description"`
+	Description   string               `json:"-" bson:"description"`
 	Price         int                  `json:"price" bson:"price"`
-	Attributes    []Attribute          `json:"attributes" bson:"attributes"`
-	AttributesMap map[string]Attribute `json:"attributesMap" bson:"attributes_map"`
+	Attributes    []Attribute          `json:"-" bson:"attributes"`
+	AttributesMap map[string]Attribute `json:"-" bson:"attributes_map"`
 	ImageSet      []Image              `json:"imageSet" bson:"image_set"`
 	Quantity      int                  `json:"quantity" bson:"quantity"`
 	Category      Category             `json:"category" bson:"category"`
-	SubCategory   Category             `json:"subCategory" bson:"sub_category"`
+	SubCategory   Category             `json:"-" bson:"sub_category"`
 	IsDigital     bool                 `json:"isDigital" bson:"is_digital"`
 }
 
@@ -40,7 +40,7 @@ type Image struct {
 	ImageWidth    int    `json:"imageWidth" bson:"image_width"`
 	ImageHeight   int    `json:"imageHeight" bson:"image_height"`
 	ImageType     int    `json:"imageType" bson:"image_type"`
-	TargetDevices []int  `json:"targetDevices" bson:"target_devices"`
+	TargetDevices []int  `json:"-" bson:"target_devices"`
 }
 
 type Category struct {
