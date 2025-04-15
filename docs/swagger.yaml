@@ -47,6 +47,25 @@ info:
   title: Example API
   version: "1.0"
 paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema: {}
+      summary: health check
+      tags:
+      - ""
   /products/get-all:
     get:
       consumes:
@@ -134,6 +153,28 @@ paths:
       summary: Gets a session by specific id
       tags:
       - sessions
+  /version:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns current version
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: fetches version
+      tags:
+      - ""
   /votes/create:
     post:
       consumes:

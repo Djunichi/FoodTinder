@@ -26,8 +26,8 @@ func (h *httpHandler) addRoutes() {
 	}))
 
 	h.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	h.router.GET("ping", h.healthCheck())
-	h.router.GET("version", h.version())
+	h.router.GET(pathWithAction("ping"), h.healthCheck())
+	h.router.GET(pathWithAction("version"), h.version())
 
 	voteRouter := h.router.Group(pathWithAction("votes"))
 	voteRouter.POST("create", h.createVote())
