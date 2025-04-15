@@ -19,8 +19,8 @@ migration:
   version: 0
 
 worker:
-  minute: "*/5"
-  hour: "*"
+  minute: "0"
+  hour: "0"
   day: "*"
   month: "*"
   dayofweek: "*"
